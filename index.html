@@ -1345,6 +1345,107 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+// Function to save prayer times and location to localStorage
+function savePrayerData(locationData, prayerTimes) {
+  const prayerData = {
+    location: locationData,
+    timings: prayerTimes,
+    timestamp: new Date().getTime() // Store current timestamp
+  };
+  
+  localStorage.setItem('prayerData', JSON.stringify(prayerData));
+}
+
+// Function to get saved prayer data from localStorage
+function getSavedPrayerData() {
+  const savedData = localStorage.getItem('prayerData');
+  if (!savedData) return null;
+  
+  const prayerData = JSON.parse(savedData);
+  
+  // Check if data is older than 24 hours (86400000 ms)
+  const isExpired = (new Date().getTime() - prayerData.timestamp) > 86400000;
+  
+  return isExpired ? null : prayerData;
+}
+
+// Modified getPrayerTimes function with localStorage support
+function getPrayerTimes() {
+  // First check if we have saved data
+  const savedData = getSavedPrayerData();
+  if (savedData) {
+    document.getElementById('locationText').textContent = `অবস্থান: ${savedData.location}`;
+    updatePrayerInfo(savedData.timings);
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    document.getElementById('locationText').textContent = "অবস্থান: দিনাজপুর জেলা, বাংলাদেশ (অবস্থান সেবা সমর্থিত নয়)";
+    getDefaultPrayerTimes();
+    return;
+  }
+  
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+      
+      try {
+        // Get location name
+        const geoResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=bn`);
+        const geoData = await geoResponse.json();
+        const locationName = geoData.locality || geoData.city || "আপনার অবস্থান";
+        
+        // Get prayer times
+        const prayerResponse = await fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`);
+        const prayerData = await prayerResponse.json();
+        
+        // Save the new data
+        savePrayerData(locationName, prayerData.data.timings);
+        
+        // Update UI
+        document.getElementById('locationText').textContent = `অবস্থান: ${locationName}`;
+        updatePrayerInfo(prayerData.data.timings);
+      } catch (error) {
+        document.getElementById('locationText').textContent = "অবস্থান: দিনাজপুর জেলা,  (ডেটা লোড করতে ব্যর্থ)";
+        getDefaultPrayerTimes();
+      }
+    },
+    (error) => {
+      document.getElementById('locationText').textContent = "অবস্থান: দিনাজপুর জেলা,  (অবস্থান অনুমতি দেওয়া হয়নি)";
+      getDefaultPrayerTimes();
+    }
+  );
+}
+
+// Modified getDefaultPrayerTimes with localStorage support
+function getDefaultPrayerTimes() {
+  const savedData = getSavedPrayerData();
+  if (savedData && savedData.location.includes('দিনাজপুর')) {
+    updatePrayerInfo(savedData.timings);
+    return;
+  }
+
+  fetch(`https://api.aladhan.com/v1/timingsByCity?city=${DEFAULT_LOCATION.city}&country=${DEFAULT_LOCATION.country}&method=2`)
+    .then(response => response.json())
+    .then(data => {
+      // Save default location data
+      savePrayerData('দিনাজপুর জেলা, বাংলাদেশ', data.data.timings);
+      updatePrayerInfo(data.data.timings);
+    })
+    .catch(error => {
+      console.error("Error fetching prayer times:", error);
+    });
+}
+
+// Initialize the app
+function initApp() {
+  updateDates();
+  getPrayerTimes();
+  setInterval(updateDates, 3600000); // Update date every hour
+}
+
+// Call the initialization function when the page loads
+window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
