@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hafez Zimam Zahi Quran App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--  iOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Zimam Quran">
+<link rel="apple-touch-icon" href="icons/icon-152x152.png">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Theme color -->
+<meta name="theme-color" content="#0f0e17">
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+    @font-face {
+      font-family: 'AdorBaksho';
+      src: url('BL Badhon Oishi Unicode.ttf') format('truetype');
+    }
+        :root {
+            --primary-bg: #0f0e17;
+            --secondary-bg: #121026;
+            --accent-color: #4cc9f0;
+            --accent-dark: #3aa8d0;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8d1;
+            --card-bg: #1e1c32;
+            --card-hover: #2a2848;
+            --progress-bar: #4cc9f0;
+            --progress-bg: #3a3860;
+            --arabic-font: 'Amiri', serif;
+            --glass-bg: rgba(30, 28, 50, 0.7);
+            --transition-all: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        body {
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+        
+        .navbar, .footer {
+            background: var(--secondary-bg);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .navbar {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        
+        .arabic-text {
+            font-family: var(--arabic-font);
+            font-size: 1.5rem;
+            line-height: 2.5rem;
+            text-align: right;
+            direction: rtl;
+        }
+        
+        .section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: var(--transition-all);
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        .section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .nav-btn {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition-all);
+            padding: 10px 15px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-btn.active {
+            color: var(--accent-color);
+            background: rgba(76, 201, 240, 0.1);
+        }
+        
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .nav-btn i {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            transition: var(--transition-all);
+        }
+        
+        .nav-btn.active i {
+            transform: scale(1.1);
+        }
+        
+        .footer {
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+            background-color: rgba(18, 16, 38, 0.85);
+            padding: 12px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition-all);
+        }
+        
+        .reciter-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: var(--transition-all);
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .reciter-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(76, 201, 240, 0.3);
+        }
+        
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: var(--transition-all);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(76, 201, 240, 0.3);
+        }
+        
+        .video-thumb {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            border-radius: 16px 16px 0 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .video-card:hover .video-thumb {
+            transform: scale(1.03);
+        }
+        
+        .player-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: var(--transition-all);
+        }
+        
+        .player-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition-all);
+        }
+        
+        .player-container:hover .player-overlay {
+            opacity: 1;
+        }
+        
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(76, 201, 240, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            transition: var(--transition-all);
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.1);
+            background: var(--accent-color);
+        }
+        
+        .quran-embed, .qna-embed {
+            width: 100%;
+            height: calc(100vh - 180px);
+            border: none;
+            border-radius: 16px;
+            background: black;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: var(--transition-all);
+        }
+        
+        .badge-accent {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: var(--transition-all);
+        }
+        
+        .info-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            transition: var(--transition-all);
+        }
+        
+        .info-btn:hover {
+            color: var(--accent-color);
+            transform: rotate(15deg);
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-weight: 600;
+            transition: var(--transition-all);
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color), transparent);
+            border-radius: 3px;
+            transition: var(--transition-all);
+        }
+        
+        .social-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: var(--transition-all);
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-3px);
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.3);
+        }
+        
+        .facebook:hover {
+            background: #1877f2;
+        }
+        
+        .youtube:hover {
+            background: #ff0000;
+        }
+        
+        .instagram:hover {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+        
+        .developer-modal {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition-all);
+        }
+        
+        .developer-modal .btn-close {
+            filter: invert(1);
+            transition: var(--transition-all);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .arabic-text {
+                font-size: 1.2rem;
+                line-height: 2rem;
+            }
+            
+            .nav-btn {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .nav-btn i {
+                font-size: 1.1rem;
+            }
+            
+            .quran-embed, .qna-embed {
+                height: calc(100vh - 150px);
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+            transition: var(--transition-all);
+        }
+        
+        /* Animation classes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Video filter tags */
+        .video-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            border-radius: 12px;
+            background: rgba(76, 201, 240, 0.15);
+            color: var(--accent-color);
+            margin-right: 5px;
+            margin-bottom: 5px;
+            transition: var(--transition-all);
+        }
+        
+        /* Loading animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Smooth transitions for video items */
+        .video-item {
+            transition: var(--transition-all);
+        }
+        .quote-container{
+         font-family:'AdorBaksho' 
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg px-3 py-2 sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1 text-white d-flex align-items-center" href="#" onclick="showSection('home-section')">
+                <i class="bi bi-book me-2" style="color: var(--accent-color);"></i>
+                <span>Hafez Zimam Zahi</span>
+            </a>
+
+            <button class="btn info-btn ms-auto" data-bs-toggle="modal" data-bs-target="#developerModal">
+                <i class="bi bi-info-circle-fill"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Home Section -->
+        <div id="home-section" class="section active fade-in">
+          <div class="prayer-times-compact">
+  <!-- First Row - Dates -->
+  <div class="date-row">
+    <span id="banglaDate">--</span>
+    <span id="hijriDate">--</span>
+  </div>
+  
+  <!-- Second Row - Prayer Info -->
+  <div class="prayer-row">
+    <div class="prayer-item">
+      <div class="label">বর্তমান</div>
+      <div class="value" id="currentPrayer">--</div>
+    </div>
+    <div class="prayer-item">
+      <div class="label">সময় বাকি</div>
+      <div class="value" id="timeLeft">--:--:--</div>
+    </div>
+    <div class="prayer-item">
+      <div class="label">পরবর্তী</div>
+      <div class="value" id="nextPrayer">--</div>
+    </div>
+  </div>
+  
+  <!-- Prayer Warning -->
+  <div class="prayer-warning" id="prayerWarning">
+    নিষিদ্ধ নামাজের সময়: সূর্য যখন ওঠে, যখন মাথার ওপর ওঠে এবং যখন ডুবে যায়  </div>
+  
+  <!-- Location -->
+  <div class="location" id="locationText">অবস্থান: দিনাজপুর জেলা</div>
+</div>
+
+<script>
+// Default location (Dinajpur, Bangladesh)
+const DEFAULT_LOCATION = {
+  city: "Dinajpur",
+  country: "Bangladesh",
+  latitude: 25.6211,
+  longitude: 88.6353
+};
+
+// Bengali digits and months
+const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+const banglaMonths = ['জানুয়ারী', 'ফেব্রুয়ারী', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 
+                     'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+const hijriMonths = ['মহররম', 'সফর', 'রবিউল আউয়াল', 'রবিউস সানি', 'জমাদিউল আউয়াল', 
+                    'জমাদিউস সানি', 'রজব', 'শাবান', 'রমজান', 'শাওয়াল', 'জিলকদ', 'জিলহজ্জ'];
+
+// Convert numbers to Bengali
+function toBanglaNumber(num) {
+  return num.toString().split('').map(digit => banglaDigits[digit]).join('');
+}
+
+// Update dates
+function updateDates() {
+  const today = new Date();
+  
+  // Bengali date
+  const banglaDate = `${toBanglaNumber(today.getDate())} ${banglaMonths[today.getMonth()]}, ${toBanglaNumber(today.getFullYear())}`;
+  document.getElementById('banglaDate').textContent = banglaDate;
+  
+  // Hijri date (using API)
+  fetch(`https://api.aladhan.com/v1/gToH?date=${today.getDate()}-${today.getMonth()+1}-${today.getFullYear()}`)
+    .then(response => response.json())
+    .then(data => {
+      const hijri = data.data.hijri;
+      const hijriDate = `${toBanglaNumber(hijri.day)} ${hijriMonths[parseInt(hijri.month.number)-1]}, ${toBanglaNumber(hijri.year)}`;
+      document.getElementById('hijriDate').textContent = hijriDate;
+    })
+    .catch(() => {
+      document.getElementById('hijriDate').textContent = "হিজরি তারিখ লোড করতে ব্যর্থ";
+    });
+}
+
+// Get prayer times for default location
+function getDefaultPrayerTimes() {
+  fetch(`https://api.aladhan.com/v1/timingsByCity?city=${DEFAULT_LOCATION.city}&country=${DEFAULT_LOCATION.country}&method=2`)
+    .then(response => response.json())
+    .then(data => {
+      updatePrayerInfo(data.data.timings);
+    })
+    .catch(error => {
+      console.error("Error fetching prayer times:", error);
+    });
+}
+
+// Get location and prayer times
+function getPrayerTimes() {
+  if (!navigator.geolocation) {
+    document.getElementById('locationText').textContent = "অবস্থান: দিনাজপুর জেলা, বাংলাদেশ (অবস্থান সেবা সমর্থিত নয়)";
+    getDefaultPrayerTimes();
+    return;
+  }
+  
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+      
+      try {
+        // Get location name
+        const geoResponse = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=bn`);
+        const geoData = await geoResponse.json();
+        const locationName = geoData.locality || geoData.city || "আপনার অবস্থান";
+        document.getElementById('locationText').textContent = `অবস্থান: ${locationName}`;
+        
+        // Get prayer times
+        const prayerResponse = await fetch(`https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`);
+        const prayerData = await prayerResponse.json();
+        updatePrayerInfo(prayerData.data.timings);
+      } catch (error) {
+        document.getElementById('locationText').textContent = "অবস্থান: দিনাজপুর জেলা,  (ডেটা লোড করতে ব্যর্থ)";
+        getDefaultPrayerTimes();
+      }
+    },
+    (error) => {
+      document.getElementById('locationText').textContent = "অবস্থান: দিনাজপুর জেলা,  (অবস্থান অনুমতি দেওয়া হয়নি)";
+      getDefaultPrayerTimes();
+    }
+  );
+}
+
+// Check if current time is in forbidden prayer period (sunrise to Dhuhr)
+function isForbiddenTime(timings) {
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  
+  const sunrise = convertTimeToMinutes(timings.Sunrise);
+  const dhuhr = convertTimeToMinutes(timings.Dhuhr);
+  
+  return currentTime >= sunrise && currentTime < dhuhr;
+}
+
+// Convert HH:MM time to minutes
+function convertTimeToMinutes(timeStr) {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+// Update prayer information
+function updatePrayerInfo(timings) {
+  const prayers = [
+    { name: 'ফজর', time: timings.Fajr, end: timings.Sunrise },
+    { name: 'যোহর', time: timings.Dhuhr, end: timings.Asr },
+    { name: 'আসর', time: timings.Asr, end: timings.Maghrib },
+    { name: 'মাগরিব', time: timings.Maghrib, end: timings.Isha },
+    { name: 'এশা', time: timings.Isha, end: "23:59" }
+  ];
+  
+  const now = new Date();
+  const currentTime = now.getHours() * 60 + now.getMinutes();
+  
+  let currentPrayer = null;
+  let nextPrayer = null;
+  
+  // Check if current time is in forbidden period (sunrise to Dhuhr)
+  if (isForbiddenTime(timings)) {
+    document.getElementById('currentPrayer').textContent = "নিষিদ্ধ";
+    document.getElementById('currentPrayer').style.color = "#dc3545";
+    document.getElementById('prayerWarning').style.display = "block";
+    
+    // Next prayer will be Dhuhr
+    nextPrayer = prayers.find(p => p.name === 'যোহর');
+  } else {
+    // Find current and next prayer normally
+    document.getElementById('prayerWarning').style.display = "none";
+    
+    for (let i = 0; i < prayers.length; i++) {
+      const prayerTime = convertTimeToMinutes(prayers[i].time);
+      if (currentTime >= prayerTime) {
+        currentPrayer = prayers[i];
+        nextPrayer = prayers[(i + 1) % prayers.length];
+      }
+    }
+    
+    if (!currentPrayer) {
+      currentPrayer = prayers[prayers.length - 1];
+      nextPrayer = prayers[0];
+    }
+    
+    document.getElementById('currentPrayer').textContent = currentPrayer.name;
+    document.getElementById('currentPrayer').style.color = "white";
+  }
+  
+  document.getElementById('nextPrayer').textContent = nextPrayer.name;
+  
+  // Update countdown
+  updateCountdown(nextPrayer.time);
+}
+
+// Countdown timer
+function updateCountdown(nextPrayerTime) {
+  const [nextHour, nextMinute] = nextPrayerTime.split(':').map(Number);
+  const now = new Date();
+  const targetTime = new Date(now);
+  
+  targetTime.setHours(nextHour, nextMinute, 0, 0);
+  
+  if (targetTime < now) {
+    targetTime.setDate(targetTime.getDate() + 1);
+  }
+  
+  const updateTimer = () => {
+    const now = new Date();
+    const diff = Math.floor((targetTime - now) / 1000);
+    
+    if (diff <= 0) {
+      clearInterval(timer);
+      getPrayerTimes();
+      return;
+    }
+    
+    const hours = Math.floor(diff / 3600);
+    const minutes = Math.floor((diff % 3600) / 60);
+    const seconds = diff % 60;
+    
+    document.getElementById('timeLeft').textContent = 
+      `${toBanglaNumber(hours)}:${toBanglaNumber(minutes)}:${toBanglaNumber(seconds)}`;
+  };
+  
+  updateTimer();
+  const timer = setInterval(updateTimer, 1000);
+}
+
+// Initialize
+updateDates();
+getPrayerTimes();
+setInterval(updateDates, 3600000); // Update date every hour
+</script>
+
+<style>
+.prayer-times-compact {
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 10px;
+  background: var(--primary-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  font-family: 'Scheherazade', serif;
+}
+
+/* First Row - Dates */
+.date-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 8px;
+  background: #2c3e50;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Second Row - Prayer Info */
+.prayer-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  gap: 5px;
+}
+
+.prayer-item {
+  flex: 1;
+  padding: 8px;
+  background: var(--glass-bg);
+  color: white;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.prayer-item .label {
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+
+.prayer-item .value {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Prayer Warning */
+.prayer-warning {
+  padding: 6px;
+  margin-bottom: 8px;
+  background: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  font-size: 12px;
+  text-align: center;
+  display: none; /* Initially hidden */
+}
+
+/* Location */
+.location {
+  font-size: 12px;
+  color: #6c757d;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .prayer-times-compact {
+    width: 95%;
+    padding: 8px;
+  }
+  
+  .prayer-item .label {
+    font-size: 11px;
+  }
+  
+  .prayer-item .value {
+    font-size: 13px;
+  }
+}
+/* Install prompt styles */
+.install-prompt {
+  animation: slideUp 0.5s ease forwards;
+  transform: translateY(100px);
+  opacity: 0;
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Fullscreen mode adjustments */
+@media (display-mode: standalone) {
+  .footer {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .install-prompt {
+    display: none !important;
+  }
+}
+</style>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="reciter-card p-4 text-center">
+                        <img src="https://i.postimg.cc/7L6s46pm/1000008461-removebg-preview.jpg" class="img-fluid rounded-circle mb-3 float-animation" style="width: 200px; height: 200px; object-fit: cover;">
+                        <h3 class="mb-2">Hafez Zimam Zahi</h3>
+                        <p class="text-secondary mb-3">Renowned Quran Reciter</p>
+                        <div class="d-flex justify-content-center gap-2 mb-4">
+                            <span class="badge badge-accent">Egyptian</span>
+                            <span class="badge badge-accent">Mishary Style</span>
+                            <span class="badge badge-accent">Tajweed Expert</span>
+                        </div>
+                        
+                        <h5 class="section-title text-center mt-4">Social Media</h5>
+                        <div class="d-flex justify-content-center mb-4">
+                            <a href="https://www.facebook.com/zimam.zahi?mibextid=sngevAx1CvDADFVH" target="_blank" class="social-icon facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="https://youtube.com/@zimamzahiofficial?si=iZFLtiMwCy8VbS9H" target="_blank" class="social-icon youtube">
+                                <i class="bi bi-youtube"></i>
+                            </a>
+                            <a href="https://www.instagram.com/zimamzahi?igsh=MXV5bGs1OThueG44bw==" target="_blank" class="social-icon instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                        </div>
+                        
+                        <p class="mb-0">Hafez Zimam Zahi is one of the most beautiful voices in Quran recitation today, known for his melodious tone and precise tajweed.</p>
+                    </div>
+                </div>
+      <div class="quote-container" style="background-color: #1e1c32; padding: 40px; border-radius: 10px; margin: 20px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  <div class="quote-who" id="quoteWho" style="font-size: 16px; color: #f39c12; margin-bottom: 10px;"></div>
+  <div class="quote-arabic" id="quoteArabic" style="font-family: 'Scheherazade', serif; font-size: 14px; color: pink; margin-bottom: 10px; direction: rtl; text-align: right;"></div>
+  <div class="quote-bangla" id="quoteBangla" style="font-size: 18px; color: #ecf0f1; margin-bottom: 5px;"></div>
+  <div class="quote-ref" id="quoteRef" style="font-size: 14px; font-style: italic; color: #bdc3c7;"></div>
+</div>     
+  <script>
+    const quotes = [
+  {
+    who: "আল্লাহ তাআলা বলেন:",
+    arabic: "إِنَّ اللَّـهَ يَرْفَعُ بِهَذَا الْكِتَابِ أَقْوَامًا وَيَضَعُ بِهِ آخَرِينَ",
+    bangla: "নিশ্চয়ই আল্লাহ এই কিতাবের মাধ্যমে অনেক জাতিকে উন্নত করেন এবং অন্যদের নিচে নামিয়ে দেন।",
+    reference: "সহীহ মুসলিম, হাদীস: ৮১৭"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: اقْرَءُوا الْقُرْآنَ، فَإِنَّهُ يَأْتِي يَوْمَ الْقِيَامَةِ شَفِيعًا لِأَصْحَابِهِ",
+    bangla: "তোমরা কুরআন তিলাওয়াত কর, কারণ তা কিয়ামতের দিন পাঠকারীদের জন্য সুপারিশকারী হবে।",
+    reference: "সহীহ মুসলিম, হাদীস: ১৯১০"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
+    bangla: "তোমাদের মধ্যে উত্তম হলো সে, যে কুরআন শেখে এবং অন্যকে শেখায়।",
+    reference: "সহীহ বুখারী, হাদীস: ৫০২৭"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: مَنْ قَرَأَ حَرْفًا مِنْ كِتَابِ اللَّهِ فَلَهُ بِهِ حَسَنَةٌ",
+    bangla: "যে কুরআনের একটি হরফ পাঠ করে, তার জন্য একটি নেকী লেখা হয় এবং প্রতিটি নেকীর জন্য দশগুণ প্রতিদান হয়।",
+    reference: "তিরমিজি, হাদীস: ২৯১০"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: إِنَّ الَّذِي لَيْسَ فِي جَوْفِهِ شَيْءٌ مِنَ الْقُرْآنِ كَالْبَيْتِ الْخَرِبِ",
+    bangla: "যার বক্ষে কুরআনের কিছু নেই, সে যেন এক ধ্বংসপ্রাপ্ত গৃহ।",
+    reference: "তিরমিজি, হাদীস: ২৯১৩"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: الْمَاهِرُ بِالْقُرْآنِ مَعَ السَّفَرَةِ الْكِرَامِ الْبَرَرَةِ",
+    bangla: "যে ব্যক্তি কুরআন পাঠে দক্ষ, সে সম্মানিত, অনুগত ফেরেশতাদের সঙ্গে থাকবে।",
+    reference: "সহীহ বুখারী, হাদীস: ৪৯৩৭"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: إِنَّ الْقُرْآنَ هُوَ حَبْلُ اللَّـهِ الْمَتِينَ",
+    bangla: "নিশ্চয়ই কুরআন আল্লাহর মজবুত দড়ি।",
+    reference: "তিরমিজি, হাদীস: ২৯১৪"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: إِنَّ اللَّـهَ لَا يُحِبُّ مِنَ النَّاسِ أَحَدًا أَفْضَلَ مِنْ حُبِّهِ لِمَنْ قَرَأَ الْقُرْآنَ وَعَمِلَ بِهِ",
+    bangla: "নিশ্চয়ই আল্লাহ মানুষদের মধ্যে কুরআন পড়া ও তার উপর আমলকারীকে সবচেয়ে বেশি ভালোবাসেন।",
+    reference: "সহীহ মুসলিম, হাদীস: ১৫৮৪"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: لَا تَجْعَلُوا بُيُوتَكُمْ قُبُورًا، وَإِنَّ الشَّيْطَانَ يَنْفِرُ مِنَ الْبَيْتِ الَّذِي يُتْلَى فِيهِ الْقُرْآنُ",
+    bangla: "তোমরা তোমাদের ঘরগুলোকে কবর বানাবে না, কেননা শয়তান এমন ঘর থেকে পালিয়ে যায় যেখানে কুরআন তিলাওয়াত করা হয়।",
+    reference: "সহীহ মুসলিম, হাদীস: ৭৩৩"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: الْقُرْآنُ رَبِيعُ قُلُوبِكُمْ",
+    bangla: "কুরআন তোমাদের হৃদয়ের বসন্ত।",
+    reference: "তিরমিজি, হাদীস: ২৯১৫"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: مَن لَمْ يَشْكُرْ النَّاسَ لَمْ يَشْكُرْ اللَّـهَ",
+    bangla: "যে লোক মানুষের প্রতি কৃতজ্ঞ নয়, সে আল্লাহর প্রতি কৃতজ্ঞ নয়।",
+    reference: "তিরমিজি, হাদীস: ১৯৩৭"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: يَقْرَأُ الْقُرْآنَ فَتَحْصُلُ لَهُ دَرَجَاتٌ مَنْهُ",
+    bangla: "কুরআন পাঠ করলে বান্দার জন্য আল্লাহ এক এক করে মর্যাদা বৃদ্ধি করেন।",
+    reference: "সুনান ইবনে মাজাহ"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: قُدِّمُوا لِمَنْ يَجْلِسُ بِالْقُرْآنِ",
+    bangla: "যে ব্যক্তি কুরআন শেখে, তাকে সম্মান দাও।",
+    reference: "সুনান আবু দাউদ"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: تَعَلَّمُوا الْقُرْآنَ فَإِنَّهُ لَا يَأْتِي لِقِيَامَةٍ فَكَرُسِيهِ",
+    bangla: "কুরআন শিখ, কারণ কিয়ামতের দিন কুরআন এক শ্রেষ্ঠ সঙ্গী হবে।",
+    reference: "ইবনে মজা"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: لَا تَحْزَنُوا إِنَّ اللَّـهَ مَعَنَا",
+    bangla: "দুঃখিত হয়ো না, আল্লাহ আমাদের সঙ্গে আছেন।",
+    reference: "সূরা তাওবা"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: جَاءَتِ الرَّحْمَةُ إِلَى الْمُؤْمِنِينَ",
+    bangla: "করুণার আগমন মুসলিমদের জন্য।",
+    reference: "সূরা মুজাদিলা"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: إِنَّ اللَّـهَ لَا يَظْلِمُ أَحَدًا",
+    bangla: "নিশ্চয়ই আল্লাহ কাউকে অন্যায় করেন না।",
+    reference: "সূরা হাদিদ"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: الْقُرْآنُ هُوَ رَجْعُ مَنَا لِلْرَحْمَةِ",
+    bangla: "কুরআন হল আমাদের দয়া ও সহানুভূতির প্রতিফলন।",
+    reference: "সূরা ফিল"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: إِنَّ اللَّـهَ لَا يَجْمَعُ النَّاسَ فِي فِي رَحْمَتِهِ",
+    bangla: "আল্লাহ তার দয়া নিয়ে মানুষের জন্য একত্রিত হন।",
+    reference: "সূরা মুমিন"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: فَاسْتَمِعُوا فَإِنَّ اللَّـهَ سَمِيعٌ عَلِيمٌ",
+    bangla: "শোনো, কেননা আল্লাহ শ্রবণকারী ও জানেন।",
+    reference: "সূরা জামিয়াত"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: قَدْ سَعَتِ الرَّحْمَةُ عَلَى الَّذِينَ يَذْكُرُونَ اللَّهَ فِي قُلُوبِهِمْ",
+    bangla: "যারা আল্লাহকে স্মরণ করে তাদের প্রতি করুণা পৌঁছায়।",
+    reference: "সূরা মুনাফিকুন"
+  },
+  {
+    who: "রাসূলুল্লাহ সাল্লাল্লাহু আলাইহি ওয়াসাল্লাম বলেছেন:",
+    arabic: "قال رسول الله صلى الله عليه وسلم: الْقُرْآنُ هُوَ فِيهِ شِفَاءٌ وَرَحْمَةٌ",
+    bangla: "কুরআন এমন একটি চিকিৎসা এবং রহমত যা মানুষের জন্য রয়েছে।",
+    reference: "সূরা আশ-শফা"
+  }
+];
+    function typeWriter(elementId, text, i, fnCallback) {
+      if (i < text.length) {
+        document.getElementById(elementId).innerHTML = text.substring(0, i + 1);
+        setTimeout(function() {
+          typeWriter(elementId, text, i + 1, fnCallback);
+        }, 100);
+      } else if (typeof fnCallback == 'function') {
+        setTimeout(fnCallback, 1000);
+      }
+    }
+
+    function displayQuote() {
+      const randomIndex = Math.floor(Math.random() * quotes.length);
+      const randomQuote = quotes[randomIndex];
+
+      // Clear previous text
+      document.getElementById("quoteWho").innerHTML = '';
+      document.getElementById("quoteArabic").innerHTML = '';
+      document.getElementById("quoteBangla").innerHTML = '';
+      document.getElementById("quoteRef").innerHTML = '';
+
+      // Start typing animation for Who, Arabic, Bangla, and Reference
+      typeWriter("quoteWho", randomQuote.who, 0, function() {
+        typeWriter("quoteArabic", randomQuote.arabic, 0, function() {
+          typeWriter("quoteBangla", randomQuote.bangla, 0, function() {
+            typeWriter("quoteRef", randomQuote.reference, 0);
+          });
+        });
+      });
+    }
+
+    // Display the first quote when the page loads
+    displayQuote();
+  </script>
+                <div class="col-md-8">
+                    <div class="card bg-secondary border-0 rounded-3 mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-award-fill me-2" style="color: var(--accent-color);"></i> Achievements</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-color);"></i> Winner of multiple Quran competitions</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-color);"></i> Certified Quran teacher with ijazah in Hafs recitation</li>
+                                <li class="mb-2"><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-color);"></i> Featured reciter at major Islamic conferences</li>
+<li><i class="bi bi-check-circle-fill me-2" style="color: var(--accent-color);"></i> Recognized for unique melodic style and voice clarity</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <h3 class="section-title mt-4">Featured Recitation</h3>
+                    <div class="video-card" onclick="playVideo('l1pUIHO1Xr0', 'Surah Al-Mulk - Hafez Zimam Zahi')">
+                        <img src="https://i.ytimg.com/vi/l1pUIHO1Xr0/hqdefault.jpg" class="video-thumb">
+                        <div class="p-3" style="font-family:'AdorBaksho'">
+                            <h5>সূরা বাকারার শেষ এর তিন আয়াত </h5>
+                            <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
+                            <div class="player-overlay">
+                                <div class="play-btn">
+                                    <i class="bi bi-play-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Videos Section -->
+        <div id="videos-section" class="section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="section-title">Zimam Official                             <a href="https://youtube.com/@zimamzahiofficial?si=iZFLtiMwCy8VbS9H" target="_blank" style="color:red">
+                                <i class="bi bi-youtube"></i>
+                            </a> </h3>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-light active filter-btn" data-filter="all">All</button>
+                    <button class="btn btn-sm btn-outline-light filter-btn" data-filter="Tarabi">Tarabi</button>
+                </div>
+            </div>
+            
+            <!-- Video Player -->
+            <div class="ratio ratio-16x9 mb-4 rounded-3 overflow-hidden shadow-lg animate__animated animate__fadeIn">
+                <iframe id="main-video-player" src="https://www.youtube.com/embed/l1pUIHO1Xr0?enablejsapi=1" allowfullscreen></iframe>
+            </div>
+        <h3 class="section-title">Recitations:</h3>
+            <!-- Playlist -->
+            <div class="row" id="video-playlist">
+                <div class="col-md-4 col-lg-3 mb-4 video-item" data-category="surah popular night">
+                    <div class="video-card h-100" onclick="playVideo('l1pUIHO1Xr0', 'Surah Al-Mulk - Hafez Zimam Zahi')">
+                        <img src="https://i.ytimg.com/vi/l1pUIHO1Xr0/hqdefault.jpg" class="video-thumb">
+                        <div class="p-3" style="font-family:'AdorBaksho'">
+                            <h5>সূরা বাকারার শেষ এর তিন আয়াত </h5>
+                            <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
+
+                            <div class="player-overlay">
+                                <div class="play-btn">
+                                    <i class="bi bi-play-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-4 video-item" data-category="">
+                    <div class="video-card h-100" onclick="playVideo('aBsMweAVEo0', 'Surah Ar-Rahman - Hafez Zimam Zahi')">
+                        <img src="https://i.ytimg.com/vi/aBsMweAVEo0/hqdefault.jpg" class="video-thumb">
+                        <div class="p-3" style="font-family:'AdorBaksho'">
+                            <h5>ঠান্ডা সুরে কুরান তেলাওয়াত </h5>
+                            <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
+                            <div class="player-overlay">
+                                <div class="play-btn">
+                                    <i class="bi bi-play-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-4 video-item" data-category="surah Tarabi">
+                    <div class="video-card h-100" onclick="playVideo('H-OqtQMKAGc', 'Juz Amma - Hafez Zimam Zahi')">
+                        <img src="https://i.ytimg.com/vi/H-OqtQMKAGc/hqdefault.jpg" class="video-thumb">
+                        <div class="p-3" style="font-family:'AdorBaksho'">
+                            <h5>তারাবির সুরে ২য় পারা তেলাওয়াত </h5>
+                            <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
+                            <div class="player-overlay">
+                                <div class="play-btn">
+                                    <i class="bi bi-play-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg-3 mb-4 video-item" data-category="surah night Tarabi">
+                    <div class="video-card h-100" onclick="playVideo('IVanLYhHS3I', 'Surah Al-Waqiah - Hafez Zimam Zahi')">
+                        <img src="https://i.ytimg.com/vi/IVanLYhHS3I/hqdefault.jpg" class="video-thumb">
+                        <div class="p-3" style="font-family:'AdorBaksho'">
+                            <h5>তারাবির সুরে ১ম পারা তেলাওয়াত </h5>
+                            <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
+                            <div class="player-overlay">
+                                <div class="play-btn">
+                                    <i class="bi bi-play-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quran Section -->
+        <div id="quran-section" class="section">
+            <iframe id="quran-embed" class="quran-embed" src="https://quran.com" allowfullscreen></iframe>
+        </div>
+
+        <!-- Q&A Section -->
+        <div id="qna-section" class="section">
+            <iframe id="qna-embed" class="qna-embed" src="https://www.iqa.info/" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="footer">
+        <div class="container">
+            <div class="d-flex justify-content-around">
+                <a href="#" class="nav-btn active" onclick="showSection('home-section')">
+                    <i class="bi bi-house"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-btn" onclick="showSection('videos-section')">
+                    <i class="bi bi-play-circle"></i>
+                    <span>Recitation</span>
+                </a>
+                <a href="#" class="nav-btn" onclick="showSection('quran-section')">
+                    <i class="bi bi-book"></i>
+                    <span>Quran</span>
+                </a>
+                <a href="#" class="nav-btn" onclick="showSection('qna-section')">
+                    <i class="bi bi-question-circle"></i>
+                    <span>Q&A</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Developer Info Modal -->
+    <div class="modal fade" id="developerModal" tabindex="-1" aria-labelledby="developerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content developer-modal">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="developerModalLabel">About Developer </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <img src="sawon.jpg" class="img-fluid rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                        
+                        <h5>Mehedi Al Hasan Sawon </h5>
+                    </div>
+                    <p>This application is dedicated to the beautiful Quran recitations of <b>Hafez Zimam Zahi</b>.</p>
+                    <div class="mt-4">
+                   <!--     <h6><i class="bi bi-code-slash me-2"></i>Developed By:</h6>
+                        <p>Mehedi Al Hasan Sawon</p> -->
+                                                <p class="text-secondary">Version 2.1.3</p>
+                        <h5 class="section-title text-center mt-4">Social Media</h5>
+                        <div class="d-flex justify-content-center mb-4">
+                            <a href="https://www.facebook.com/mehedialhasansawon217" target="_blank" class="social-icon facebook">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="https://www.instagram.com/mehedi_al_hasan_sawon_21?igsh=MWVxYzJpcWZ2bHU1cQ==" target="_blank" class="social-icon instagram">
+                                <i class="bi bi-instagram"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-sm btn-outline-light" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- YouTube IFrame API -->
+    <script>
+        // Load YouTube API script
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
+    
+    <!-- Custom JS -->
+    <script>
+        // Global variables
+        let currentSection = 'home-section';
+        let ytPlayer = null;
+        
+        // Show section function
+        function showSection(sectionId) {
+            // Hide current section
+            document.getElementById(currentSection).classList.remove('active');
+            
+            // Update current section
+            currentSection = sectionId;
+            
+            // Show new section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active nav button
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('onclick').includes(sectionId)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Play video function
+        function playVideo(videoId, title) {
+            // Show videos section
+            showSection('videos-section');
+            
+            // Update iframe src with autoplay
+            const iframe = document.getElementById('main-video-player');
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1`;
+            
+            // Scroll player into view
+            setTimeout(() => {
+                iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+        
+        // Filter videos function
+        function filterVideos(category) {
+            const items = document.querySelectorAll('.video-item');
+            items.forEach((item, index) => {
+                const categories = item.getAttribute('data-category') || '';
+                const shouldShow = category === 'all' || categories.includes(category);
+                
+                if (shouldShow) {
+                    item.style.display = 'block';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, index * 50);
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            });
+            
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-filter') === category) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // Initialize YouTube player
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('main-video-player', {
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+        
+        function onPlayerReady(event) {
+            // Player is ready
+        }
+        
+        function onPlayerStateChange(event) {
+            // Handle player state changes if needed
+        }
+        
+        // Initialize filter buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up filter button click handlers
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    filterVideos(filter);
+                });
+            });
+            
+            // Initialize with 'all' filter
+            filterVideos('all');
+        });
+        // Install prompt handling
+let deferredPrompt;
+const installButton = document.createElement('div');
+installButton.innerHTML = `
+  <div class="install-prompt" style="position: fixed; bottom: 80px; left: 0; right: 0; background: var(--card-bg); padding: 15px; margin: 10px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 9999; display: none;">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 style="margin-bottom: 5px;">Install Hafez Zimam Zahi App</h5>
+        <p style="margin-bottom: 0; font-size: 0.9rem;">Get the best experience by installing our app</p>
+      </div>
+      <div>
+        <button id="install-button" class="btn btn-sm" style="background: var(--accent-color); color: var(--primary-bg);">Install</button>
+        <button id="dismiss-button" class="btn btn-sm btn-outline-light ms-2">Later</button>
+      </div>
+    </div>
+  </div>
+`;
+document.body.appendChild(installButton);
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the mini-infobar from appearing on mobile
+  e.preventDefault();
+  // Stash the event so it can be triggered later
+  deferredPrompt = e;
+  
+  // Show the install button
+  const promptElement = document.querySelector('.install-prompt');
+  promptElement.style.display = 'block';
+  
+  // Install button click handler
+  document.getElementById('install-button').addEventListener('click', () => {
+    // Hide the install prompt
+    promptElement.style.display = 'none';
+    
+    // Show the install prompt
+    deferredPrompt.prompt();
+    
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      deferredPrompt = null;
+    });
+  });
+  
+  // Dismiss button click handler
+  document.getElementById('dismiss-button').addEventListener('click', () => {
+    promptElement.style.display = 'none';
+  });
+});
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(registration => {
+        console.log('ServiceWorker registration successful');
+      })
+      .catch(err => {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+}
+    </script>
+</body>
+</html>
