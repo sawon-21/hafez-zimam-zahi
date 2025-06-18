@@ -1,4 +1,4 @@
-const CACHE_NAME = 'zimam-quran-v03';
+const CACHE_NAME = 'zimam-quran-v0003';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
