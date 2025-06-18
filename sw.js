@@ -1,10 +1,11 @@
-const CACHE_NAME = 'zimam-quran-v3';
+const CACHE_NAME = 'zimam-quran-v03';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/styles.css',
   '/script.js',
   '/sawon.jpg',
+  '/icon.png',
   '/https://quran.com/bn',
   '/https://www.iqa.info',
   'https://i.postimg.cc/7L6s46pm/1000008461-removebg-preview.jpg',
