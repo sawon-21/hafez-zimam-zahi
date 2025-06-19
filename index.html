@@ -777,11 +777,46 @@ setInterval(updateDates, 3600000); // Update date every hour
     display: none !important;
   }
 }
+.glowing-profile {
+  display: inline-block;
+  border-radius: 50%;
+  padding: 6px;
+  background: radial-gradient(circle, #ffffff, transparent);
+  box-shadow:
+    0 0 15px #ffffff,
+    0 0 25px #4cc9f0,
+    0 0 35px #e60073,
+    0 0 45px #8e44ad;
+  animation: glow-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+  0% {
+    box-shadow:
+      0 0 10px #ffffff,
+      0 0 20px #4cc9f0,
+      0 0 30px #e60073;
+  }
+  50% {
+    box-shadow:
+      0 0 15px #ffffff,
+      0 0 25px #8e44ad,
+      0 0 35px #e60073;
+  }
+  100% {
+    box-shadow:
+      0 0 20px #ffffff,
+      0 0 30px #4cc9f0,
+      0 0 40px #8e44ad;
+  }
+}
 </style>
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <div class="reciter-card p-4 text-center">
-                        <img src="https://i.postimg.cc/7L6s46pm/1000008461-removebg-preview.jpg" class="img-fluid rounded-circle mb-3 float-animation" style="width: 200px; height: 200px; object-fit: cover;">
+<div class="glowing-profile float-animation mb-3">
+  <img src="https://i.postimg.cc/7L6s46pm/1000008461-removebg-preview.jpg" alt="Zimam Zahi" class="img-fluid rounded-circle" style="width: 200px; height: 200px; object-fit: cover;">
+</div>
                         <h3 class="mb-2">Hafez Zimam Zahi</h3>
                         <p class="text-secondary mb-3">Renowned Quran Reciter</p>
                         <div class="d-flex justify-content-center gap-2 mb-4">
