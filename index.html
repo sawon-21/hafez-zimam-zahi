@@ -597,7 +597,7 @@ function updatePrayerInfo(timings) {
   
   // Check if current time is in forbidden period (sunrise to Dhuhr)
   if (isForbiddenTime(timings)) {
-    document.getElementById('currentPrayer').textContent = "নিষিদ্ধ";
+    document.getElementById('currentPrayer').textContent = "...";
     document.getElementById('currentPrayer').style.color = "#dc3545";
     document.getElementById('prayerWarning').style.display = "block";
     
@@ -1029,11 +1029,11 @@ setInterval(updateDates, 3600000); // Update date every hour
                         </div>
                     </div>
                     
-                    <h3 class="section-title mt-4">Featured Recitation</h3>
-                    <div class="video-card" onclick="playVideo('l1pUIHO1Xr0', 'Surah Al-Mulk - Hafez Zimam Zahi')">
-                        <img src="https://i.ytimg.com/vi/l1pUIHO1Xr0/hqdefault.jpg" class="video-thumb">
+                    <h3 class="section-title mt-4">Latest Recitation</h3>
+                    <div class="video-card" onclick="playVideo('zac3YicwGAE', 'Surah Al-Kahf - Hafez Zimam Zahi')">
+                        <img src="https://i.ytimg.com/vi/zac3YicwGAE/hqdefault.jpg" class="video-thumb">
                         <div class="p-3" style="font-family:'AdorBaksho'">
-                            <h5>সূরা বাকারার শেষ এর তিন আয়াত </h5>
+                            <h5>সূরা হাশরের শেষ এর ৭ আয়াত| মনমুগ্ধকর তেলাওয়াত </h5>
                             <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
                             <div class="player-overlay">
                                 <div class="play-btn">
@@ -1065,6 +1065,20 @@ setInterval(updateDates, 3600000); // Update date every hour
         <h3 class="section-title">Recitations:</h3>
             <!-- Playlist -->
             <div class="row" id="video-playlist">
+              <div class="col-md-4 col-lg-3 mb-4 video-item" data-category="surah">
+    <div class="video-card h-100" onclick="playVideo('zac3YicwGAE', 'Surah Al-Kahf - Hafez Zimam Zahi')">
+        <img src="https://i.ytimg.com/vi/zac3YicwGAE/hqdefault.jpg" class="video-thumb">
+        <div class="p-3" style="font-family:'AdorBaksho'">
+ <h5>সূরা হাশরের শেষ এর ৭ আয়াত| মনমুগ্ধকর তেলাওয়াত </h5>
+            <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
+            <div class="player-overlay">
+                <div class="play-btn">
+                    <i class="bi bi-play-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                 <div class="col-md-4 col-lg-3 mb-4 video-item" data-category="surah popular night">
                     <div class="video-card h-100" onclick="playVideo('l1pUIHO1Xr0', 'Surah Al-Mulk - Hafez Zimam Zahi')">
                         <img src="https://i.ytimg.com/vi/l1pUIHO1Xr0/hqdefault.jpg" class="video-thumb">
@@ -1084,7 +1098,7 @@ setInterval(updateDates, 3600000); // Update date every hour
                     <div class="video-card h-100" onclick="playVideo('aBsMweAVEo0', 'Surah Ar-Rahman - Hafez Zimam Zahi')">
                         <img src="https://i.ytimg.com/vi/aBsMweAVEo0/hqdefault.jpg" class="video-thumb">
                         <div class="p-3" style="font-family:'AdorBaksho'">
-                            <h5>ঠান্ডা সুরে কুরান তেলাওয়াত </h5>
+                            <h5>ঠান্ডা সুরে কুরআন তেলাওয়াত </h5>
                             <p class="text-secondary">হাফেজ মো: জিমাম জাহি</p>
                             <div class="player-overlay">
                                 <div class="play-btn">
